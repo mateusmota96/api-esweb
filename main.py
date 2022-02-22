@@ -21,7 +21,8 @@ while True:
         identify = element['id']
         send_notify = element['send_notify']
 
-        if http_code != 200 and http_code != 403 and (error == 1 and notify == 1 and send_notify == 0):
+        if http_code != 200 and http_code != 403 and http_code != 301 and http_code != 302 and \
+                (error == 1 and notify == 1 and send_notify == 0):
             # STATUS
             status = "'ERROR'"
             dicio = str(http_code)
@@ -41,7 +42,8 @@ while True:
             except:
                 print("UNKNOWN ERROR")
 
-        elif http_code == 200 and (error == 0 and notify == 0 and send_notify == 1):
+        elif (http_code == 200 or http_code == 301 or http_code == 302) and \
+                (error == 0 and notify == 0 and send_notify == 1):
             # STATUS
             status = "'RE-UP'"
             dicio = str(http_code)

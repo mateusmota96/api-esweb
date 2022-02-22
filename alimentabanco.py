@@ -30,13 +30,12 @@ urls = string.split(",")
 
 while True:
     start = time.time()
-    for url in urls:
-        condiction = " WHERE url = " + str(url) + ""
+    for u in urls:
+        condiction = " WHERE url = " + str(u) + ""
         try:
-            url = str.replace(url, "'", "")
+            url = str.replace(u, "'", "")
             req = requests.head(url, headers={'User-Agent': request_header}, timeout=10)
             http_code = int(req.status_code)
-
             # STRING ERROR
             str_error = "SELECT error FROM monitor" + condiction
             c.execute(str_error)
@@ -69,14 +68,15 @@ while True:
                 c.execute(updateall)
                 conn.commit()
             # ELIF HTTP_CODE = 200 AND ERROR = 1 THEN STILL SET ERROR 1 TO (RE-UP)
-            elif (http_code == 301 or http_code == 200) and bd_error == 1 and send_notify == 0:
+            elif (http_code == 301 or http_code == 200 or http_code == 302) and bd_error == 1 and send_notify == 0:
                 str_error = " , error = 1"
+                str_notify = " , notify = 0"
                 up_stat = str(update_status + str(str(error_dict[str(http_code)])))
                 updateall = up_stat + update_http + str(http_code) + str_error + str_notify + condiction
                 c.execute(updateall)
                 conn.commit()
             # ELIF HTTP_CODE = 200 AND ERROR = 1 AND NOTIFY = 1 THEN ZERO ALL FIELDS
-            elif (http_code == 301 or http_code == 200) and bd_error == 1 and send_notify == 1:
+            elif (http_code == 301 or http_code == 200 or http_code == 302) and bd_error == 1 and send_notify == 1:
                 update_http = ", http_code = "
                 str_error = " , error = 0, notify = 0, send_notify = 1"
                 up_stat = str(update_status + str(str(error_dict[str(http_code)])))
@@ -85,7 +85,7 @@ while True:
                 conn.commit()
 
             # ELIF
-            elif (http_code == 301 or http_code == 200) and bd_error == 0 and bd_notify == 0:
+            elif (http_code == 301 or http_code == 200 or http_code == 302) and bd_error == 0 and bd_notify == 0:
                 str_error = " , error = 0"
                 up_stat = str(update_status + str(str(error_dict[str(http_code)])))
                 updateall = up_stat + update_http + str(http_code) + condiction
@@ -96,8 +96,9 @@ while True:
             http_code = 998
             # UPDATE STATUS ERROR IN BD
             str_error = " , error = 1"
+            str_notify = " , notify = 1"
             dicio = str(http_code)
-            up_stat = str(update_status + str(str(error_dict[dicio])) + str_error)
+            up_stat = str(update_status + str(str(error_dict[dicio])) + str_error + str_notify)
             updateall = up_stat + update_http + str(http_code) + condiction
             c.execute(updateall)
             conn.commit()
@@ -105,10 +106,12 @@ while True:
             http_code = 999
             # UPDATE STATUS ERROR IN BD
             str_error = " , error = 1"
+            str_notify = " , notify = 1"
             dicio = str(http_code)
-            up_stat = str(update_status + str(str(error_dict[dicio])) + str_error)
+            up_stat = str(update_status + str(str(error_dict[dicio])) + str_error + str_notify)
             updateall = up_stat + update_http + str(http_code) + condiction
             c.execute(updateall)
             conn.commit()
+
 
     print("FIM: ",str(float(time.time())-start))
