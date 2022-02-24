@@ -36,7 +36,9 @@ while True:
             data = {"id": str(identify)}
             try:
                 bot.send_message('{CHAT-ID}', message, parse_mode='html')
+                # UNSET NOTIFY -> notify = 0
                 requests.post('http://api.example.com.br/notify/post', data)
+                # SET SENDNOTIFY -> send_notify = 1
                 requests.post('http://api.example.com.br/delnotify/postsend', data)
             except TimeoutError:
                 print("Timeout ERROR")
@@ -44,7 +46,7 @@ while True:
                 print("UNKNOWN ERROR")
 
         elif (http_code == 200 or http_code == 301 or http_code == 302) and \
-                (error == 0 and notify == 0 and send_notify == 1):
+                (error == 1 and notify == 1 and send_notify == 1):
             # STATUS
             status = "'RE-UP'"
             dict = str(http_code)
@@ -56,7 +58,9 @@ while True:
             message = message_http + server + error_dict[dict] + "\n<i>Server is Up Again!</i>"
             data = {"id": str(identify)}
             try:
+                # UNSET NOTIFY -> notify = 0
                 requests.post('http://api.esweb.com.br/notify/post', data)
+                # UNSET SENDNOTIFY -> send_notify = 0
                 requests.post('http://api.esweb.com.br/delnotify/delsend', data)
                 bot.send_message('{CHAT-ID}', message, parse_mode='html')
 
