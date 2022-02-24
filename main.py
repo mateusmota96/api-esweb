@@ -1,15 +1,16 @@
+# THIS BOT SEND MESSAGE IN TELEGRAM_BOT WHEN YOUR WEBSITE IS DOWN
 import time
 from dict import error_dict
 import telebot
 import requests
 import json
 
-bot = telebot.TeleBot("5097997910:AAGJDPbxF1DazJx6r96KlwzNueh7AzvUehk")
+bot = telebot.TeleBot("{BOT-TOKEN}")
 limit = 9999
-client = 'SERRANO'
+client = '{CLIENT}'
 
 while True:
-    urlapi = "http://sentinel-webtest.api.mateus.com.br/domain/list?limit=" + str(limit) + "&client=" + client
+    urlapi = "http://{api.example.com.br}/domain/list?limit=" + str(limit) + "&client=" + client
     req = requests.get(urlapi)
     arrayjson = json.loads(req.content)
     for element in arrayjson:
@@ -25,18 +26,18 @@ while True:
                 (error == 1 and notify == 1 and send_notify == 0):
             # STATUS
             status = "'ERROR'"
-            dicio = str(http_code)
+            dict = str(http_code)
             strstatus = status.replace("'", "")
             message_http = "❌ [<b>" + strstatus + "</b>]\n"
 
-            # MENSAGEM
-            servidor = "<b>Servidor:</b> " + url + "\n<b>Status Code:</b> [" + str(http_code) + "] - "
-            message = message_http + servidor + error_dict[dicio]
+            # MESSAGE
+            server = "<b>Server:</b> " + url + "\n<b>Status Code:</b> [" + str(http_code) + "] - "
+            message = message_http + server + error_dict[dict]
             data = {"id": str(identify)}
             try:
-                bot.send_message('-606686746', message, parse_mode='html')
-                requests.post('http://sentinel-webtest.api.mateus.com.br/notify/post', data)
-                requests.post('http://sentinel-webtest.api.mateus.com.br/delnotify/postsend', data)
+                bot.send_message('{CHAT-ID}', message, parse_mode='html')
+                requests.post('http://api.example.com.br/notify/post', data)
+                requests.post('http://api.example.com.br/delnotify/postsend', data)
             except TimeoutError:
                 print("Timeout ERROR")
             except:
@@ -46,18 +47,18 @@ while True:
                 (error == 0 and notify == 0 and send_notify == 1):
             # STATUS
             status = "'RE-UP'"
-            dicio = str(http_code)
+            dict = str(http_code)
             strstatus = status.replace("'", "")
             message_http = "✅ [<b>" + strstatus + "</b>]\n"
 
-            # MENSAGEM
-            servidor = "<b>Servidor:</b> " + url + "\n<b>Status Code:</b> [" + str(http_code) + "] - "
-            message = message_http + servidor + error_dict[dicio] + "\n<i>Servidor Voltou a Responder!</i>"
+            # MESSAGE
+            server = "<b>Server:</b> " + url + "\n<b>Status Code:</b> [" + str(http_code) + "] - "
+            message = message_http + server + error_dict[dict] + "\n<i>Server is Up Again!</i>"
             data = {"id": str(identify)}
             try:
-                requests.post('http://sentinel-webtest.api.mateus.com.br/notify/post', data)
-                requests.post('http://sentinel-webtest.api.mateus.com.br/delnotify/delsend', data)
-                bot.send_message('-606686746', message, parse_mode='html')
+                requests.post('http://api.esweb.com.br/notify/post', data)
+                requests.post('http://api.esweb.com.br/delnotify/delsend', data)
+                bot.send_message('{CHAT-ID}', message, parse_mode='html')
 
             except TimeoutError:
                 print("Timeout ERROR")
