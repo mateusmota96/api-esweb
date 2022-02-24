@@ -10,7 +10,7 @@ limit = 9999
 client = '{CLIENT}'
 
 while True:
-    urlapi = "http://{api.example.com.br}/domain/list?limit=" + str(limit) + "&client=" + client
+    urlapi = "http://{api.example.com}/domain/list?limit=" + str(limit) + "&client=" + client
     req = requests.get(urlapi)
     arrayjson = json.loads(req.content)
     for element in arrayjson:
@@ -37,9 +37,9 @@ while True:
             try:
                 bot.send_message('{CHAT-ID}', message, parse_mode='html')
                 # UNSET NOTIFY -> notify = 0
-                requests.post('http://api.example.com.br/notify/post', data)
+                requests.post('http://{api.example.com}/notify/post', data)
                 # SET SENDNOTIFY -> send_notify = 1
-                requests.post('http://api.example.com.br/delnotify/postsend', data)
+                requests.post('http://{api.example.com}/delnotify/postsend', data)
             except TimeoutError:
                 print("Timeout ERROR")
             except:
@@ -59,9 +59,9 @@ while True:
             data = {"id": str(identify)}
             try:
                 # UNSET NOTIFY -> notify = 0
-                requests.post('http://api.esweb.com.br/notify/post', data)
+                requests.post('http://{api.example.com}/notify/post', data)
                 # UNSET SENDNOTIFY -> send_notify = 0
-                requests.post('http://api.esweb.com.br/delnotify/delsend', data)
+                requests.post('http://{api.example.com}/delnotify/delsend', data)
                 bot.send_message('{CHAT-ID}', message, parse_mode='html')
 
             except TimeoutError:
