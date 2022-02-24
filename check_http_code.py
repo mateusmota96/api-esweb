@@ -1,6 +1,5 @@
 import time
 from requests import ReadTimeout
-
 from dict import error_dict
 import requests
 import mysql.connector
@@ -11,8 +10,6 @@ update_http = ", http_code = "
 
 # HEADER HTTP
 request_header = 'Mozilla/5.0 (Platform; Security; OS-or-CPU; Localization; rv:1.4) Gecko/20030624 Netscape/7.1 (ax)'
-
-
 
 # CONNECTOR MYSQL
 conn = mysql.connector.connect(
@@ -52,40 +49,34 @@ while True:
             send_notify = int(str.replace(str(c.fetchone()),"(","").replace(",)",""))
 
             # CHECK IF ERROR
-            # IF ERROR !=200 AND (ERROR AND NOTIFY = 0) THEN SET ERROR = 1
+            # IF ERROR !=200 AND (ERROR AND NOTIFY = 0) 
+            # THEN SET ERROR = 1 AND NOTIFY = 1
             if http_code != 200 and http_code != 403 and http_code != 302 and http_code != 301 and bd_error == 0 and send_notify == 0:
                 str_error = " , error = 1, notify = 1 "
                 up_stat = str(update_status + str(str(error_dict[str(http_code)])))
                 updateall= up_stat + update_http + str(http_code) + str_error + condiction
                 c.execute(updateall)
                 conn.commit()
-            # ELIF ERROR != 200 AND ERROR = 1 AND NOTIFY = 0 THEN SET NOTIFY = 1
-            elif ((http_code != 200 and http_code != 403 and http_code != 302 and http_code != 301) and bd_error == 1 and bd_notify == 0 and send_notify == 0) or (http_code == 200 and bd_error == 1 and bd_notify == 0):
+            # ELIF HTTP_CODE == 200/301/302/403 AND ERROR = 1 
+            # THEN STILL SET ERROR 1 TO (RE-UP)
+            elif (http_code == 301 or http_code == 200 or http_code == 302) and bd_error == 1 and send_notify == 0:
                 str_error = " , error = 1"
                 str_notify = " , notify = 1"
                 up_stat = str(update_status + str(str(error_dict[str(http_code)])))
                 updateall = up_stat + update_http + str(http_code) + str_error + str_notify + condiction
                 c.execute(updateall)
                 conn.commit()
-            # ELIF HTTP_CODE = 200 AND ERROR = 1 THEN STILL SET ERROR 1 TO (RE-UP)
-            elif (http_code == 301 or http_code == 200 or http_code == 302) and bd_error == 1 and send_notify == 0:
-                str_error = " , error = 1"
-                str_notify = " , notify = 0"
-                up_stat = str(update_status + str(str(error_dict[str(http_code)])))
-                updateall = up_stat + update_http + str(http_code) + str_error + str_notify + condiction
-                c.execute(updateall)
-                conn.commit()
-            # ELIF HTTP_CODE = 200 AND ERROR = 1 AND NOTIFY = 1 THEN ZERO ALL FIELDS
+            # ELIF HTTP_CODE == 200/301/302/403 AND ERROR = 1 AND SENDNOTIFY = 1 
+            # THEN ZERO ALL FIELDS (BACK TO NORMAL AND ALREADY SENT TELEGRAM MESSAGE)
             elif (http_code == 301 or http_code == 200 or http_code == 302) and bd_error == 1 and send_notify == 1:
                 update_http = ", http_code = "
-                str_error = " , error = 0, notify = 0, send_notify = 1"
+                str_error = " , error = 0, notify = 0, send_notify = 0"
                 up_stat = str(update_status + str(str(error_dict[str(http_code)])))
                 updateall = up_stat + update_http + str(http_code) + str_error + condiction
                 c.execute(updateall)
                 conn.commit()
-
-            # ELIF
-            elif (http_code == 301 or http_code == 200 or http_code == 302) and bd_error == 0 and bd_notify == 0:
+            # ELIF HTTP_CODE == 200/301/302/403 AND ALREADY SENT TELEGRAM THEN ERROR = 0
+            elif (http_code == 301 or http_code == 200 or http_code == 302) and (bd_error == 0 or bd_error == 1) and bd_notify == 0:
                 str_error = " , error = 0"
                 up_stat = str(update_status + str(str(error_dict[str(http_code)])))
                 updateall = up_stat + update_http + str(http_code) + condiction
