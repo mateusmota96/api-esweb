@@ -42,8 +42,8 @@ while True:
                 requests.post('http://{api.example.com}/delnotify/postsend', data)
             except TimeoutError:
                 print("Timeout ERROR")
-            except:
-                print("UNKNOWN ERROR")
+            except Exception as e:
+                print("UNKNOWN ERROR\n",e)
 
         elif (http_code == 200 or http_code == 301 or http_code == 302) and \
                 (error == 1 and notify == 1 and send_notify == 1):
@@ -66,7 +66,7 @@ while True:
 
             except TimeoutError:
                 print("Timeout ERROR")
-            except:
-                print("UNKNOWN ERROR")
+            except Exception as e:
+                print("UNKNOWN ERROR\n",e)
 
     time.sleep(10)
