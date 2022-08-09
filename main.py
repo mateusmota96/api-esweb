@@ -38,20 +38,10 @@ while True:
             try:
                 bot.send_message('-648269755', message, parse_mode='html')
                 # UNSET NOTIFY -> notify = 0
-<<<<<<< HEAD
                 requests.post('http://sentinel-web.api.esweb.com.br/notify/post',
                                     headers={'User-Agent': request_header}, data=data)
             except Exception as err:
                 ErrorLog('ERROR', err)
-=======
-                requests.post('http://{api.example.com}/notify/post', data)
-                # SET SENDNOTIFY -> send_notify = 1
-                requests.post('http://{api.example.com}/delnotify/postsend', data)
-            except TimeoutError:
-                print("Timeout ERROR")
-            except Exception as e:
-                print("UNKNOWN ERROR\n",e)
->>>>>>> e7a4ba93c844e7b02889cbad557dd83c6edaab45
 
         elif error == 0 and send_notify == 1:
             # STATUS
@@ -69,15 +59,7 @@ while True:
                 requests.post('http://sentinel-web.api.esweb.com.br/notify/del',
                               headers={'User-Agent': request_header}, data=data)
                 bot.send_message('-648269755', message, parse_mode='html')
-
-<<<<<<< HEAD
             except Exception as err:
                 ErrorLog('ERROR', err)
-=======
-            except TimeoutError:
-                print("Timeout ERROR")
-            except Exception as e:
-                print("UNKNOWN ERROR\n",e)
->>>>>>> e7a4ba93c844e7b02889cbad557dd83c6edaab45
 
     time.sleep(10)
